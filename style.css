@@ -1,0 +1,101 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: cursive;
+    font-size: 25px;
+}
+body{
+    background-image: url('tools/image.1.jpg');
+    background-size: cover; /* Makes the background cover the entire element */
+    background-repeat: no-repeat;
+    background-position: top center;
+    height: 120vh;
+    /* margin: 0; */
+    overflow: auto;
+    backdrop-filter: blur(1px); /* Apply the blur effect */
+    /* -webkit-backdrop-filter: blur(1px); */
+}
+
+header nav{
+    background-color: none;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+}
+header nav h1{
+    font-size: 44px;
+    font-weight: 900;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+header nav form{
+    display: flex;
+    justify-content: center;
+}
+form input[type="text"] {
+    flex-grow: 1; /* remain in particular space when overall size/space decreases */
+    margin-right: 10px;
+    width: 333px;
+
+}
+form input[type="text"], button[type="submit"] {
+    border: none;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 4px;
+}
+form button[type="submit"]{
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}
+form button[type="submit"]:hover {
+    background-color: rgb(143, 1, 1);
+}
+/* Main Section */
+div h2{
+    font-size: 33px;
+    text-align: center;
+    margin-top: 70px;
+}
+img{
+    /* display: block; */
+    max-width: 100%;
+    margin-left: 511px;
+    margin-top: 34px;
+}
+.content{
+    margin-left: 430px;
+    font-family: s;
+    font-size: 44px;
+    font-style: italic;
+}
+span:after,
+span:before{
+    content:"\00a0\00a0\00a0\00a0\00a0";
+    text-decoration:line-through;
+}
+    /* RESPONSIVE CODE */
+@media screen and (max-width:640px) {
+    header nav{
+        flex-direction: column;
+        margin-top: 0px;
+        text-align: center;
+    }
+    h1{
+        margin-top: 0px;
+    }
+    header nav form{
+        margin-top: 0px;
+        width: 80%;
+        font-size: 1px;
+    }
+    div h2{
+        margin-top: 0px;
+        font-size: 18px;
+    }
+}
