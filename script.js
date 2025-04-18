@@ -1,30 +1,91 @@
-//console.log used to print values to browser's console.. mainly for debugging
-const searchbox= document.querySelector('.searchbox'); //const becoz variable cant reassigned new value
-const searchbtn= document.querySelector('.searchbtn');//Selects HTML element with class searchbtn & stores in searchbtn.
-const recipeContainer= document.querySelector('.container');
+const searchbox = document.querySelector('.searchbox');
+const searchbtn = document.querySelector('.searchbtn');
+const recipeContainer = document.querySelector('#recipes');
+const resultHeader = document.querySelector('#result-header');
+const placeholderHeader = document.querySelector('#placeholder-header');
+const placeholderImg = document.querySelector('#placeholder-img');
+const placeholderText = document.querySelector('#placeholder-text');
+const recipeDetails = document.querySelector('#recipe-details');
 
-// Function to fetche recipes
-const fetchRecipes = async(query)=> { //Defines asynchronous func(func that runs parallely w other func) to fetch recipes based on query(search input)
-    //fetches data from the API using the query provided. 
-    const data= await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`) //bacltick(``)used to create template literals
-    const response= await data.json(); //Convert fetch data into JS object (JSON format)stores in response
+// Function to fetch recipes
+const fetchRecipes = async (query) => {
+    try {
+        const data = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`);
+        const response = await data.json();
 
-    response.meals.forEach(meal => {
-        const recipeDiv= document.createElement('div'); //Creates new div element to hold recipe details
-        recipeDiv.classList.add('recipe'); //Add class recipe to newly created div
+        // Clear placeholders and previous results
+        placeholderHeader.style.display = 'none';
+        placeholderImg.style.display = 'none';
+        placeholderText.style.display = 'none';
+        recipeContainer.innerHTML = '';
+        recipeDetails.style.display = 'none';
 
-        recipeDiv.innerHTML= `
-        <img src="${meal.strMealThumb}">
-        <h3>${meal.strMeal}</h3>
-        <p>${meal.strArea}</p>
-        <p>${meal.strCategory}</p>
-        `
-        recipeContainer.appendChild(recipeDiv);
-    });
-    // console.log(respone.meals[0]);
-}
-searchbtn.addEventListener('click',(e)=>{
-    e.preventDefault(); //to prevent to auto submit
-    const searchInput= searchbox.value.trim(); //Get text input from search box,removes extra space & stores in searchInput
-    fetchRecipes(searchInput); //Calls fetchRecipes funct with user's input to fetch & display recipes
-})
+        // Show "XYZ" header
+        resultHeader.style.display = 'block';
+
+        // Handle no results
+        if (!response.meals) {
+            recipeContainer.innerHTML = `<p style="text-align: center; font-size: 32px; margin-left: 67px;
+">No recipes found. Try another keyword!&#128557</p>`;
+            return;
+        }
+
+        // Display recipes
+        response.meals.forEach((meal) => {
+            const recipeDiv = document.createElement('div');
+            recipeDiv.classList.add('recipe');
+
+            recipeDiv.innerHTML = `
+                <img 
+                    src="${meal.strMealThumb}" 
+                    alt="${meal.strMeal}" 
+                    style="max-width: 100%; border-radius: 8px; transition: transform 0.3s ease;"
+                >
+                <h3>${meal.strMeal}</h3>
+                <p><strong>Area:</strong> ${meal.strArea}</p>
+                <p><strong>Category:</strong> ${meal.strCategory}</p>
+            `;
+
+            recipeDiv.addEventListener('click', () => showRecipeDetails(meal, recipeDiv));
+            recipeContainer.appendChild(recipeDiv);
+        });
+    } catch (error) {
+        console.error('Error fetching recipes:', error);
+    }
+};
+
+// Function to display recipe details
+const showRecipeDetails = (meal, recipeDiv) => {
+    recipeDetails.innerHTML = `
+        <h2>${meal.strMeal}</h2>
+        <img 
+            src="${meal.strMealThumb}" 
+            alt="${meal.strMeal}" 
+            style="max-width: 300px; border-radius: 8px; margin: 20px 0;"
+        >
+        <p><strong>Category:</strong> ${meal.strCategory}</p>
+        <p><strong>Area:</strong> ${meal.strArea}</p>
+        <p><strong>Instructions:</strong> ${meal.strInstructions}</p>
+    `;
+
+    // Apply inline CSS to decrease the size of the clicked item image
+    const clickedImage = recipeDiv.querySelector('img');
+    clickedImage.style.transform = 'scale(0.8)';
+    clickedImage.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+    clickedImage.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+
+    // Show recipe details and animate scroll
+    recipeDetails.style.display = 'block';
+    recipeDetails.classList.add('active');
+    recipeDetails.scrollIntoView({ behavior: 'smooth' });
+};
+
+// Event listener for search
+searchbtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const searchInput = searchbox.value.trim();
+
+    if (searchInput) {
+        fetchRecipes(searchInput);
+    }
+});
